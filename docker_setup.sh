@@ -36,7 +36,7 @@ echo "Adding Docker's official GPG key"
 mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
 echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 #Install docker
@@ -44,3 +44,17 @@ echo "Installing Docker"
 
 apt-get update
 apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+
+#Experimental update docker storage location
+sed -i 's@ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock@ExecStart=/usr/bin/dockerd --data-root /docker/ -H fd:// --containerd=/run/containerd/containerd.sock@' \
+ /lib/systemd/system/docker.service
+
+
+#if restoring this isn't required
+#cp -R /var/lib/docker/* /docker/
+
+#Enable and start docker
+systemctl enable docker --now
+
+#Install Portainer
+docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
