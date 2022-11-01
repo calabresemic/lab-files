@@ -1,0 +1,27 @@
+---
+- hosts: applyPatches
+  become: true
+  tasks:
+    - name: Classify hosts by OS family
+      group_by:
+        key: os_{{ ansible_facts['os_family'] }}
+
+- hosts: os_Debian
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Update apt repo and cache
+      apt: update_cache=yes force_apt_get=yes
+    - name: Upgrade all apt packages
+      apt: upgrade=dist force_apt_get=yes
+
+- hosts: os_RedHat
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Update all installed packages using YUM module
+      yum:
+        name: '*'
+        state: latest
+        update_cache: yes
+        update_only: yes

@@ -1,0 +1,159 @@
+version: '3.7'
+
+services:
+  ###OMBI###
+  db:
+    image: mysql:8.0
+    volumes:
+      - ombi_db:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: '6g0oMHi1S7kb8Qp549'
+    networks:
+      private:
+
+  ombi:
+    depends_on:
+      - db
+    image: linuxserver/ombi:latest
+    volumes:
+      - ombi:/config
+    restart: always
+    networks:
+      private:
+      DMZ_VLAN:
+        ipv4_address: 172.16.75.17
+
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    ports:
+      - 16757:80
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: '6g0oMHi1S7kb8Qp549'
+    networks:
+      private:
+      
+  ###STARR APPS###
+  sonarr:
+    image: linuxserver/sonarr:latest
+    volumes:
+      - sonarr:/config
+      - type: volume
+        source: mediaRoot
+        target: /data
+        volume:
+          nocopy: true
+    restart: always
+    networks:
+      private:
+      Docker_VLAN:
+        ipv4_address: 172.16.45.12
+        
+  radarr:
+    image: linuxserver/radarr:latest
+    volumes:
+      - radarr:/config
+      - type: volume
+        source: mediaRoot
+        target: /data
+        volume:
+          nocopy: true
+    restart: always
+    networks:
+      private:
+      Docker_VLAN:
+        ipv4_address: 172.16.45.13
+  
+  prowlarr:
+    image: linuxserver/prowlarr:nightly
+    volumes:
+      - prowlarr:/config
+    restart: always
+    networks:
+      private:
+      Docker_VLAN:
+        ipv4_address: 172.16.45.14
+  
+  ###Download Clients###
+  sabnzbd1:
+    image: linuxserver/sabnzbd:latest
+    volumes:
+      - sabnzbd1:/config
+      - type: volume
+        source: usenetRoot
+        target: /data
+        volume:
+          nocopy: true
+    restart: always
+    networks:
+      private:
+      Docker_VLAN:
+        ipv4_address: 172.16.45.15
+    
+  sabnzbd2:
+    image: linuxserver/sabnzbd:latest
+    volumes:
+      - sabnzbd2:/config
+      - type: volume
+        source: usenetRoot
+        target: /data
+        volume:
+          nocopy: true
+    restart: always
+    networks:
+      private:
+      Docker_VLAN:
+        ipv4_address: 172.16.45.16
+      
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    volumes:
+      - qbittorrent:/config
+      - type: volume
+        source: torrentRoot
+        target: /data
+        volume:
+          nocopy: true
+    restart: always
+    networks:
+      private:
+      Docker_VLAN:
+        ipv4_address: 172.16.45.17
+  
+networks:
+  private:
+    driver: bridge
+  Docker_VLAN:
+    external: true
+  DMZ_VLAN:
+    external: true
+    
+volumes:
+  ombi_db:
+  ombi:
+  sonarr:
+  radarr:
+  prowlarr:
+  sabnzbd1:
+  sabnzbd2:
+  qbittorrent:
+
+  mediaRoot:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.10.10.4,nolock,soft"
+      device: ":/mnt/mediastorage/media_dataset"
+  usenetRoot:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.10.10.4,nolock,soft,rw"
+      device: ":/mnt/mediastorage/media_dataset/usenet"
+  torrentRoot:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.10.10.4,nolock,soft,rw"
+      device: ":/mnt/mediastorage/media_dataset/torrents"

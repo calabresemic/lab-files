@@ -1,0 +1,29 @@
+---
+- hosts: docker
+  become: true
+  vars:
+    data_mount_alt: /dev/xvdb1
+    data_mount_src: /dev/xvdb
+    data_mount_path: /docker
+
+  pre_tasks:
+    - name: Create list of mounted devices
+      set_fact:
+        mounted_devices: "{{ ansible_mounts|json_query('[].device') }}"
+
+    - name: Create file system if not exists
+      filesystem:
+        fstype: ext4
+        dev: "{{ data_mount_src }}"
+      when: (data_mount_src not in mounted_devices) and (data_mount_alt not in mounted_devices)
+
+    - name: Mount file system if not mounted
+      mount:
+        path: "{{ data_mount_path }}"
+        src: "{{ data_mount_src }}"
+        fstype: ext4
+        state: mounted
+      when: (data_mount_src not in mounted_devices) and (data_mount_alt not in mounted_devices)
+
+  roles:
+    - geerlingguy.docker

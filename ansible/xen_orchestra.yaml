@@ -1,0 +1,11 @@
+plugin: community.general.xen_orchestra
+api_host: xen.home.domain
+user: ansible
+password: "password"
+validate_certs: true
+user_ssl: true
+groups:
+    applyPatches: "'ApplyPatches' in tags"
+    docker: "'Docker' in tags"
+    kasm: "'Kasm' in tags"
+    noConfigChanges: "'NoConfigChanges' in tags"
