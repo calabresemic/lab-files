@@ -1,0 +1,1 @@
+cmd /c ""C:\Program Files\Git\bin\bash.exe" --login -i -- Z:\Michael\lab-files\update-repo.sh"
