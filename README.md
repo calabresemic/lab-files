@@ -1,3 +1,3 @@
 # lab-files
 
-This repo will contain projects used in my home lab. I'm also documenting these projects over at michaelcalabrese.me.
+I'm using this repo to store files for the projects that I'm working on in my home lab. I'm writing some blogs about them over at https://www.michaelcalabrese.me.
