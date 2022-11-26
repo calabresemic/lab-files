@@ -1,0 +1,16 @@
+---
+audidashcamdownload:
+  module: blackvuedashcamdownload
+  class: BlackVueDashCamDownload
+  event_to_listen_for: audi_dashcam_connected
+  smb_server_name: truenas.home.domain
+  smb_server_address: 192.168.0.4
+  smb_timeout: 60
+  smb_username: !secret truenas_username
+  smb_password: !secret truenas_password
+  smb_share: "blackvue"
+  smb_path: "Audi/"
+  dashcam_ip: 10.10.200.44
+  download_videosonly: False
+  rear_camera: True
+  days_to_keep: 30
