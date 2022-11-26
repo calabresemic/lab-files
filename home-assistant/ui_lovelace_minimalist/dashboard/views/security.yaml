@@ -1,0 +1,148 @@
+title: "security"
+path: "security"
+cards:
+  #Vertical-Stack to keep things organized on mobile
+  - type: vertical-stack
+    cards:
+      #Title with back button
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: chip_back
+            variables:
+              ulm_chip_back_path: home
+
+          - type: 'custom:button-card'
+            template: card_title
+            name: Security
+
+      #Alarm Card
+      - type: alarm-panel
+        entity: alarm_control_panel.abode_alarm_gateway
+
+      #Cameras
+      - type: 'custom:button-card'
+        template: card_title
+        name: Cameras
+
+      - type: horizontal-stack
+        cards:
+          - type: picture-entity
+            entity: camera.blue_iris_x_endeavor_front_doorbell
+            name: Doorbell BlueIris
+            show_state: false
+
+          - type: picture-entity
+            entity: camera.doorbell_sub
+            name: Doorbell Dahua
+            show_state: false
+
+      #Motion
+      - type: 'custom:button-card'
+        template: card_title
+        name: Motion
+
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+              ulm_card_binary_sensor_name: Front Porch
+            entity: binary_sensor.blue_iris_x_endeavor_front_doorbell_motion
+
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+              ulm_card_binary_sensor_name: Back Porch
+            entity: binary_sensor.hallway_motion
+
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+              ulm_card_binary_sensor_name: Side of House
+            entity: binary_sensor.blue_iris_x_endeavor_front_doorbell_motion
+
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+              ulm_card_binary_sensor_name: Front Hallway
+            entity: binary_sensor.hallway_motion
+
+      #Doors and Windows
+      - type: 'custom:button-card'
+        template: card_title
+        name: Doors and Windows
+
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+            entity: binary_sensor.front_door
+
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+            entity: binary_sensor.back_door
+
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+            entity: binary_sensor.garage_side_door
+
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+            entity: binary_sensor.dining_room_window
+
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+            entity: binary_sensor.main_garage_door
+
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+            entity: binary_sensor.small_garage_door
+
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+            entity: binary_sensor.master_br_window
+
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+            entity: binary_sensor.br2_window

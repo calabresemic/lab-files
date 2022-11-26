@@ -1,0 +1,74 @@
+title: "kitchen"
+path: "kitchen"
+cards:
+  #Vertical-Stack to keep things organized on mobile
+  - type: vertical-stack
+    cards:
+      #Title with back button
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: chip_back
+            variables:
+              ulm_chip_back_path: home
+
+          - type: 'custom:button-card'
+            template: card_title
+            name: Kitchen
+
+      #Section Header
+      - type: 'custom:button-card'
+        template: card_title
+        name: Lights
+
+      #Light Entities
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_light
+            entity: light.kitchen_overhead_lights
+            variables:
+              ulm_card_light_enable_slider: true
+              ulm_card_light_enable_collapse: true
+              ulm_card_light_name: Overhead Lights
+
+          - type: 'custom:button-card'
+            template: card_light
+            entity: light.under_cabinet_lights
+            variables:
+              ulm_card_light_name: Cabinet Lights
+
+      #Section Header
+      - type: 'custom:button-card'
+        template: card_title
+        name: Equipment
+
+      #Light Entities
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_power_outlet
+            variables:
+              ulm_card_power_outlet_name: Espresso Machine
+            entity: switch.gosund_wp3_3_relay
+
+      #Section Header
+      - type: 'custom:button-card'
+        template: card_title
+        name: Sensors
+
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+            entity: binary_sensor.dining_room_window
+
+          - type: 'custom:button-card'
+            template: card_binary_sensor
+            variables:
+              ulm_card_binary_sensor_alert: true
+              ulm_show_last_changed: true
+            entity: binary_sensor.smoke_detector

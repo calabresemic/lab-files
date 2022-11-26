@@ -1,0 +1,57 @@
+title: "lights"
+path: "lights"
+cards:
+  #Vertical-Stack to keep things organized on mobile
+  - type: vertical-stack
+    cards:
+      #Title with back button
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: chip_back
+            variables:
+              ulm_chip_back_path: home
+
+          - type: 'custom:button-card'
+            template: card_title
+            name: Lights
+
+      #Total lights on counter
+      - type: "custom:button-card"
+        template: custom_card_yagrasdemonde_lights_count
+        entity: sensor.lights_on
+
+      #Giant list of all lights
+      - type: 'custom:button-card'
+        template: card_light
+        entity: light.living_room_lamp_1
+
+      - type: 'custom:button-card'
+        template: card_light
+        entity: light.living_room_lamp_2
+
+      - type: 'custom:button-card'
+        template: card_light
+        entity: light.back_porch_lights
+
+      - type: 'custom:button-card'
+        template: card_light
+        entity: light.front_porch_lights
+
+      - type: 'custom:button-card'
+        template: card_light
+        entity: light.kitchen_overhead_lights
+        variables:
+          ulm_card_light_enable_slider: true
+          ulm_card_light_enable_collapse: true
+
+      - type: 'custom:button-card'
+        template: card_light
+        entity: light.under_cabinet_lights
+
+      - type: 'custom:button-card'
+        template: card_light
+        entity: light.living_room_overhead_lights
+        variables:
+          ulm_card_light_enable_slider: true
+          ulm_card_light_enable_collapse: true

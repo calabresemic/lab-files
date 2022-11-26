@@ -1,0 +1,41 @@
+title: "house"
+path: "house"
+cards:
+  #Vertical-Stack to keep things organized on mobile
+  - type: vertical-stack
+    cards:
+      #Title with back button
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: chip_back
+            variables:
+              ulm_chip_back_path: home
+
+          - type: 'custom:button-card'
+            template: card_title
+            name: House
+
+      #Garbage Collection
+      - type: horizontal-stack
+        cards:
+          - type: entity
+            entity: sensor.next_garbage_collection
+            name: Garbage Day
+
+          - type: entity
+            entity: sensor.next_recycling_collection
+            name: Recycling Day
+
+      #Shopping-List
+      - type: shopping-list
+        title: "Shopping List"
+
+      #Earthquake Map
+      - type: map
+        geo_location_sources:
+          - usgs_earthquakes_feed
+        entities:
+          - zone.home
+        title: Nearby Earthquakes
+        default_zoom: 9

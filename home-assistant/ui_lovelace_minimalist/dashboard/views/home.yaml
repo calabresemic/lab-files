@@ -1,0 +1,203 @@
+title: "home"
+path: "home"
+cards:
+  #Vertical-Stack to keep things organized on mobile
+  - type: vertical-stack
+    cards:
+      #Welcome Card with navigation
+      - type: "custom:button-card"
+        template: "card_esh_welcome"
+        triggers_update: "input_boolean.welcome_toggle"
+        variables:
+          ulm_card_esh_welcome_collapse: input_boolean.welcome_toggle
+          ulm_weather: "weather.endeavor"
+          entity_1:
+            nav: "house"
+            icon: "mdi:home"
+            name: "House"
+            color: "blue"
+          entity_2:
+            nav: "lights"
+            icon: "mdi:lightbulb"
+            name: "Lights"
+            color: "yellow"
+          entity_3:
+            nav: "security"
+            icon: "mdi:shield"
+            name: "Secure"
+            color: "green"
+          entity_4:
+            nav: "lab"
+            icon: "mdi:nas"
+            name: "Lab"
+            color: "red"
+          #entity_5:
+          #  nav: "outside"
+          #  icon: "mdi:forest"
+          #  name: "Outside"
+          #  color: "red"
+
+      #Horizontal-Stack to organize person-cards
+      - type: horizontal-stack
+        cards:
+        - type: 'custom:button-card'
+          template: card_person
+          entity: person.michael
+          variables:
+            ulm_card_person_entity: person.michael
+            ulm_card_person_use_entity_picture: true
+            ulm_card_person_eta: sensor.michael_travel_time
+        - type: 'custom:button-card'
+          template: card_person
+          entity: person.katie
+          variables:
+            ulm_card_person_entity: person.katie
+            ulm_card_person_use_entity_picture: true
+            ulm_card_person_eta: sensor.katie_travel_time
+
+
+      # - type: horizontal-stack
+      #   cards:
+      #     - type: "custom:button-card"
+      #       template: custom_card_imswel_person
+      #       variables:
+      #         ulm_card_imswel_person_entity: person.michael
+      #         ulm_card_imswel_person_wifi_tracker: device_tracker.michael_s_s22
+      #         ulm_card_imswel_person_gps_tracker: device_tracker.sm_s906u
+      #         ulm_card_imswel_person_findmy_script: script.find_michaels_phone
+      #         ulm_card_imswel_person_use_entity_picture: true
+
+      #     - type: "custom:button-card"
+      #       template: custom_card_imswel_person
+      #       variables:
+      #         ulm_card_imswel_person_entity: person.katie
+      #         ulm_card_imswel_person_wifi_tracker: device_tracker.iphone_2
+      #         ulm_card_imswel_person_gps_tracker: device_tracker.iphone
+      #         ulm_card_imswel_person_findmy_script: script.find_katies_phone
+      #         ulm_card_imswel_person_use_entity_picture: true
+      
+      #Rooms Title card
+      - type: 'custom:button-card'
+        template: card_title
+        name: Rooms
+
+      #Horizontal-stack to organize rooms
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template:
+              - card_esh_room
+              - yellow_on
+            name: Living Room
+            entity: light.living_room_lamps
+            icon: mdi:sofa-outline
+            tap_action:
+              action: navigate
+              navigation_path: 'living_room'
+            variables:
+              ulm_custom_card_esh_room_light_entity: light.living_room_lamps
+            label: >
+              [[[
+                return "🌡️" + states["sensor.shelly_78f2f0_temperature"].state + " °F"
+              ]]]
+
+          - type: 'custom:button-card'
+            template:
+              - card_esh_room
+              - yellow_on
+            name: Kitchen
+            entity: light.kitchen_overhead_lights
+            icon: mdi:knife
+            tap_action:
+              action: navigate
+              navigation_path: 'kitchen'
+            variables:
+              ulm_custom_card_esh_room_light_entity: light.kitchen_overhead_lights
+
+      #Horizontal-stack to organize rooms
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template:
+              - card_esh_room
+              - yellow_on
+            name: Office
+            icon: mdi:laptop
+            tap_action:
+              action: navigate
+              navigation_path: 'office'
+
+          - type: 'custom:button-card'
+            template:
+              - card_esh_room
+              - yellow_on
+            name: Master BR
+            icon: mdi:bed
+            tap_action:
+              action: navigate
+              navigation_path: 'master_br'
+            
+      #Horizontal-stack to organize rooms
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template:
+              - card_esh_room
+              - yellow_on
+            name: Guest BR 1
+            icon: mdi:image-filter-hdr
+            tap_action:
+              action: navigate
+              navigation_path: 'guest_br1'
+            label: 'Mountains'
+
+          - type: 'custom:button-card'
+            template:
+              - card_esh_room
+              - yellow_on
+            name: Guest BR 2
+            icon: mdi:dumbbell
+            tap_action:
+              action: navigate
+              navigation_path: 'guest_br2'
+            label: 'GYM'
+      
+      #Horizontal-stack to organize rooms
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template:
+              - card_esh_room
+              - yellow_on
+            name: Garage
+            icon: mdi:garage
+            tap_action:
+              action: navigate
+              navigation_path: 'garage'
+
+          - type: 'custom:button-card'
+            template:
+              - card_esh_room
+              - yellow_on
+            name: Crawl Space
+            icon: mdi:home-floor-b
+            tap_action:
+              action: navigate
+              navigation_path: 'lab'
+            label: >
+              [[[
+                return "🌡️" + states["sensor.shelly_78f097_temperature"].state + " °F"
+              ]]]
+
+      - type: 'custom:button-card'
+        template:
+          - card_esh_room
+          - yellow_on
+        name: Outside
+        entity: light.dp10_dimmer
+        icon: mdi:forest
+        tap_action:
+          action: navigate
+          navigation_path: 'outside'
+        variables:
+          ulm_custom_card_esh_room_light_entity: light.dp10_dimmer

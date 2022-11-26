@@ -1,0 +1,59 @@
+title: "lab"
+path: "lab"
+cards:
+  #Vertical-Stack to keep things organized on mobile
+  - type: vertical-stack
+    cards:
+      #Title with back button
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: chip_back
+            variables:
+              ulm_chip_back_path: home
+
+          - type: 'custom:button-card'
+            template: card_title
+            name: Lab
+
+      #Horizontal stack for temp and humidity
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_graph
+            entity: sensor.shelly_78f097_temperature
+            variables:
+              ulm_card_graph_color: "var(--google-blue)"
+              ulm_card_graph_name: Temperature
+              ulm_card_graph_entity: sensor.shelly_78f097_temperature
+              ulm_card_graph_type: fill
+              ulm_card_graph_hours: 24
+          - type: 'custom:button-card'
+            template: card_graph
+            entity: sensor.shelly_78f097_humidity
+            variables:
+              ulm_card_graph_color: "var(--google-red)"
+              ulm_card_graph_name: Humidity
+              ulm_card_graph_entity: sensor.shelly_78f097_humidity
+              ulm_card_graph_type: fill
+              ulm_card_graph_hours: 24
+
+
+      #Update Info
+      #- type: 'custom:button-card'
+      #  template: card_homeassistant_updates
+      #  variables:
+      #    ulm_card_homeassistant_entity: "binary_sensor.updates"
+      #    ulm_card_homeassistant_core: "sensor.core_updates"
+      #    ulm_card_homeassistant_supervisor: "sensor.supervisor_updates"
+      #    ulm_card_homeassistant_os: "sensor.os_updates"
+
+      #Router Info
+      #- type: custom:button-card
+      #  template: custom_card_irmajavi_speedtest
+      #  variables:
+      #    ulm_custom_card_irmajavi_speedtest_download_speed_entity: sensor.speedtest_download
+      #    ulm_custom_card_irmajavi_speedtest_upload_speed_entity: sensor.speedtest_upload
+      #    ulm_custom_card_irmajavi_speedtest_color: blue
+      #    ulm_custom_card_irmajavi_speedtest_router_name: Shitty
+      #    ulm_custom_card_irmajavi_speedtest_router_model: Hotel WiFi

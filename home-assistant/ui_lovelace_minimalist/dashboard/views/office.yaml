@@ -1,0 +1,33 @@
+title: "office"
+path: "office"
+cards:
+  #Vertical-Stack to keep things organized on mobile
+  - type: vertical-stack
+    cards:
+      #Title with back button
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: chip_back
+            variables:
+              ulm_chip_back_path: home
+
+          - type: 'custom:button-card'
+            template: card_title
+            name: Office
+
+      #Section Header
+      - type: 'custom:button-card'
+        template: card_title
+        name: Sensors
+
+      #Printer Sensor
+      - type: 'custom:button-card'
+        template: custom_card_mpse_printer
+        entity: sensor.mfc_j1010dw_status
+        variables:
+          ulm_card_printer_name: Brother MFC_J1010DW
+          ulm_card_printer_black_name: sensor.mfc_j1010dw_black_ink_remaining
+          ulm_card_printer_cyan_name: sensor.mfc_j1010dw_cyan_ink_remaining
+          ulm_card_printer_magenta_name: sensor.mfc_j1010dw_magenta_ink_remaining
+          ulm_card_printer_yellow_name: sensor.mfc_j1010dw_yellow_ink_remaining

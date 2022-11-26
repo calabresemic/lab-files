@@ -1,0 +1,30 @@
+title: "master_br"
+path: "master_br"
+cards:
+  #Vertical-Stack to keep things organized on mobile
+  - type: vertical-stack
+    cards:
+      #Title with back button
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: chip_back
+            variables:
+              ulm_chip_back_path: home
+
+          - type: 'custom:button-card'
+            template: card_title
+            name: Master Bedroom
+
+      #Section Header
+      - type: 'custom:button-card'
+        template: card_title
+        name: Windows
+
+      #Window Sensors
+      - type: 'custom:button-card'
+        template: card_binary_sensor
+        variables:
+          ulm_card_binary_sensor_alert: true
+          ulm_show_last_changed: true
+        entity: binary_sensor.master_br_window
