@@ -1,16 +1,15 @@
 version: '3.7'
 
 services:
-  ###OMBI###
   db:
     image: mysql:8.0
     volumes:
       - ombi_db:/var/lib/mysql
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: '6g0oMHi1S7kb8Qp549'
+    env_file:
+      - stack.env
     networks:
-      private:
+      - db
 
   ombi:
     depends_on:
@@ -19,117 +18,229 @@ services:
     volumes:
       - ombi:/config
     restart: always
+    ports:
+      - 3579:3579
+    env_file:
+      - stack.env
     networks:
-      private:
-      DMZ_VLAN:
-        ipv4_address: 172.16.75.17
+      - db
+      - private
 
   phpmyadmin:
     depends_on:
       - db
     image: phpmyadmin/phpmyadmin
     restart: unless-stopped
-    ports:
-      - 16757:80
-    environment:
-      PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: '6g0oMHi1S7kb8Qp549'
+    env_file:
+      - stack.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ombidb.tls=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.ombidb.rule=Host(`ombidb.live.calabresemedia.com`)"
+      - "traefik.http.routers.ombidb.entrypoints=websecure"
     networks:
-      private:
-      
-  ###STARR APPS###
+      - db
+      - private
+      - traefik_public
+
   sonarr:
     image: linuxserver/sonarr:latest
     volumes:
       - sonarr:/config
       - type: volume
-        source: mediaRoot
+        source: media
         target: /data
         volume:
           nocopy: true
     restart: always
+    env_file:
+      - stack.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.tls=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.live.calabresemedia.com`)"
+      - "traefik.http.routers.sonarr.entrypoints=websecure"
+      - "traefik.http.routers.sonarr.middlewares=homeusers"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
     networks:
-      private:
-      Docker_VLAN:
-        ipv4_address: 172.16.45.12
+      - private
+      - traefik_public
         
   radarr:
     image: linuxserver/radarr:latest
     volumes:
       - radarr:/config
       - type: volume
-        source: mediaRoot
+        source: media
         target: /data
         volume:
           nocopy: true
     restart: always
+    env_file:
+      - stack.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.tls=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.live.calabresemedia.com`)"
+      - "traefik.http.routers.radarr.entrypoints=websecure"
+      - "traefik.http.routers.radarr.middlewares=homeusers"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
     networks:
-      private:
-      Docker_VLAN:
-        ipv4_address: 172.16.45.13
+      - private
+      - traefik_public
+      
+  readarr:
+    image: linuxserver/readarr:nightly
+    volumes:
+      - readarr:/config
+      - type: volume
+        source: media
+        target: /data
+        volume:
+          nocopy: true
+    restart: always
+    env_file:
+      - stack.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.readarr.tls=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.readarr.rule=Host(`readarr.live.calabresemedia.com`)"
+      - "traefik.http.routers.readarr.entrypoints=websecure"
+      - "traefik.http.routers.readarr.middlewares=homeusers"
+      - "traefik.http.services.readarr.loadbalancer.server.port=8787"
+    networks:
+      - private
+      - traefik_public
+      
+  calibre:
+    image: linuxserver/calibre:latest
+    volumes:
+      - calibre:/config
+      - type: volume
+        source: books
+        target: /books
+        volume:
+          nocopy: true
+    restart: always
+    env_file:
+      - stack.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.calibre.tls=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.calibre.rule=Host(`calibre.live.calabresemedia.com`)"
+      - "traefik.http.routers.calibre.entrypoints=websecure"
+      - "traefik.http.routers.calibre.middlewares=homeusers"
+      - "traefik.http.services.calibre.loadbalancer.server.port=8080"
+    networks:
+      - private
+      - traefik_public
+      
+  calibre-web:
+    image: linuxserver/calibre-web:latest
+    volumes:
+      - calibre-web:/config
+      - /var/data/calibre-web/gmail.json:/app/calibre-web/gmail.json
+      - type: volume
+        source: books
+        target: /books
+        volume:
+          nocopy: true
+    restart: always
+    env_file:
+      - stack.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.calibre-web.tls=true"
+      - "traefik.http.routers.calibre-web.rule=Host(`calibre-web.live.calabresemedia.com`)"
+      - "traefik.http.routers.calibre-web.entrypoints=websecure"
+      - "traefik.http.services.calibre-web.loadbalancer.server.port=8083"
+    networks:
+      - private
+      - traefik_public
   
   prowlarr:
     image: linuxserver/prowlarr:nightly
     volumes:
       - prowlarr:/config
     restart: always
+    env_file:
+      - stack.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.prowlarr.tls=true"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.live.calabresemedia.com`)"
+      - "traefik.http.routers.prowlarr.entrypoints=websecure"
+      - "traefik.http.routers.prowlarr.middlewares=homeusers"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
     networks:
-      private:
-      Docker_VLAN:
-        ipv4_address: 172.16.45.14
+      - private
+      - traefik_public
   
-  ###Download Clients###
   sabnzbd1:
     image: linuxserver/sabnzbd:latest
     volumes:
       - sabnzbd1:/config
       - type: volume
-        source: usenetRoot
+        source: usenet
         target: /data
         volume:
           nocopy: true
     restart: always
+    env_file:
+      - stack.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.sabnzbd1.tls=true"
+      - "traefik.http.routers.sabnzbd1.rule=Host(`sabnzbd1.live.calabresemedia.com`)"
+      - "traefik.http.routers.sabnzbd1.entrypoints=websecure"
+      - "traefik.http.routers.sabnzbd1.middlewares=homeusers"
+      - "traefik.http.services.sabnzbd1.loadbalancer.server.port=8080"
     networks:
-      private:
-      Docker_VLAN:
-        ipv4_address: 172.16.45.15
+      - private
+      - traefik_public
     
   sabnzbd2:
     image: linuxserver/sabnzbd:latest
     volumes:
       - sabnzbd2:/config
       - type: volume
-        source: usenetRoot
+        source: usenet
         target: /data
         volume:
           nocopy: true
     restart: always
+    env_file:
+      - stack.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.sabnzbd2.tls=true"
+      - "traefik.http.routers.sabnzbd2.rule=Host(`sabnzbd2.live.calabresemedia.com`)"
+      - "traefik.http.routers.sabnzbd2.entrypoints=websecure"
+      - "traefik.http.routers.sabnzbd2.middlewares=homeusers"
+      - "traefik.http.services.sabnzbd2.loadbalancer.server.port=8080"
     networks:
-      private:
-      Docker_VLAN:
-        ipv4_address: 172.16.45.16
-      
-  qbittorrent:
-    image: linuxserver/qbittorrent:latest
-    volumes:
-      - qbittorrent:/config
-      - type: volume
-        source: torrentRoot
-        target: /data
-        volume:
-          nocopy: true
-    restart: always
-    networks:
-      private:
-      Docker_VLAN:
-        ipv4_address: 172.16.45.17
+      - private
+      - traefik_public
   
 networks:
+  db:
+    driver: bridge
+    internal: true
   private:
     driver: bridge
-  Docker_VLAN:
-    external: true
-  DMZ_VLAN:
+    ipam:
+      config:
+        - subnet: 172.18.201.0/24
+  traefik_public:
     external: true
     
 volumes:
@@ -137,23 +248,24 @@ volumes:
   ombi:
   sonarr:
   radarr:
+  readarr:
+  calibre:
+  calibre-web:
   prowlarr:
   sabnzbd1:
   sabnzbd2:
-  qbittorrent:
-
-  mediaRoot:
+  media:
     driver_opts:
       type: "nfs"
       o: "addr=10.10.10.4,nolock,soft"
       device: ":/mnt/mediastorage/media_dataset"
-  usenetRoot:
+  usenet:
     driver_opts:
       type: "nfs"
       o: "addr=10.10.10.4,nolock,soft,rw"
       device: ":/mnt/mediastorage/media_dataset/usenet"
-  torrentRoot:
+  books:
     driver_opts:
       type: "nfs"
       o: "addr=10.10.10.4,nolock,soft,rw"
-      device: ":/mnt/mediastorage/media_dataset/torrents"
+      device: ":/mnt/mediastorage/media_dataset/media/books"

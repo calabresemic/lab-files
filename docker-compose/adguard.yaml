@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  adguardhome:
+    image: adguard/adguardhome:latest
+    hostname: adguard.home.domain
+    restart: always
+    environment:
+      - TZ=America/Anchorage
+    volumes: 
+      - work:/opt/adguardhome/work/
+      - /var/data/adguard:/opt/adguardhome/conf
+    networks:
+      ipvlans_Server_LAN:
+        ipv4_address: 192.168.0.2
+
+volumes:
+  work:
+
+networks:
+  ipvlans_Server_LAN:
+    external: true

@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  app:
+    image: containrrr/watchtower:latest
+    restart: always
+    environment:
+      - TZ=America/Anchorage
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_SCHEDULE=0 0 4 * * *
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

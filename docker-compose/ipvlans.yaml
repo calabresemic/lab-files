@@ -1,0 +1,20 @@
+version: "3.7"
+
+# Stack to manage attachable ipvlan networks
+
+services:
+  net-init: # small image that exits automatically
+    image: hello-world
+    networks:
+      - Server_LAN
+
+networks:
+  Server_LAN:
+    attachable: true
+    driver: ipvlan
+    driver_opts:
+      parent: eth3
+    ipam:
+      config:
+        - subnet: "192.168.0.0/24"
+          gateway: 192.168.0.1

@@ -1,0 +1,55 @@
+version: '3.7'
+
+services:
+  db:
+    image: mysql:8.0
+    volumes:
+      - db:/var/lib/mysql
+    restart: always
+    env_file:
+      - stack.env
+    networks:
+      - db
+
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.oahdb.tls=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.oahdb.rule=Host(`oahdb.live.calabresemedia.com`)"
+      - "traefik.http.routers.oahdb.entrypoints=websecure"
+    networks:
+      - db
+      - traefik_public
+
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    restart: always
+    volumes:
+      - wp:/var/www/html
+    ports:
+      - 33381:80 # Open port for legacy HAProxy ingress
+    env_file:
+      - stack.env
+    networks:
+      - db
+      - traefik_public
+
+volumes:
+  db:
+  wp:
+
+networks:
+  db: # Internal net for database communications
+    driver: bridge
+    internal: true
+  traefik_public:
+    external: true

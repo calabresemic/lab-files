@@ -1,0 +1,31 @@
+version: "3.7"
+
+services:
+  app:
+    image: hkotel/mealie:latest
+    volumes:
+      - data:/app/data
+    restart: always
+    environment:
+      - TZ=America/Anchorage
+      - RECIPE_PUBLIC=true
+      - RECIPE_SHOW_NUTRITION=true
+      - RECIPE_SHOW_ASSETS=true
+      - RECIPE_LANDSCAPE_VIEW=true
+      - RECIPE_DISABLE_COMMENTS=false
+      - RECIPE_DISABLE_AMOUNT=false
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mealie.tls=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.mealie.rule=Host(`mealie.live.calabresemedia.com`)"
+      - "traefik.http.routers.mealie.entrypoints=websecure"
+    networks:
+      - traefik_public
+    
+volumes:
+  data:
+  
+networks:
+  traefik_public:
+    external: true

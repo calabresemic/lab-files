@@ -1,0 +1,17 @@
+version: "3.7"
+
+# Stack to manage attachable traefik network.
+
+services:
+  net-init: # small image that exits automatically
+    image: hello-world
+    networks:
+      - public
+
+networks:
+  public:
+    attachable: true
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.18.200.0/24"
