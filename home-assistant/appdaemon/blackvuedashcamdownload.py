@@ -1,4 +1,4 @@
-import appdaemon.plugins.hass.hassapi as hass
+import hassapi as hass
 from smb.SMBConnection import SMBConnection
 import requests
 import re
@@ -26,6 +26,7 @@ class BlackVueDashCamDownload(hass.Hass):
     self.download_videosonly = self.args.get("download_videosonly", True)
     self.rear_camera = self.args.get("rear_camera", False)
     self.days_to_keep = self.args.get("days_to_keep", 30)
+    self.notify_title = self.args.get("notify_title")
 
     self.listen_event(self.download_from_dashcam, self.event_to_listen_for)
     self.log(f"Listening for {self.event_to_listen_for} event")
@@ -33,6 +34,7 @@ class BlackVueDashCamDownload(hass.Hass):
 
   def download_from_dashcam(self, event, data, kwargs):
     self.log(f"Starting DashCam Download for Camera: {self.dashcam_ip}")
+    self.notify(f"Starting DashCam Download for Camera: {self.dashcam_ip}", title = self.notify_title, name = "home_assistant", target = ["928048749324959824"])
 
     try:
       url = f"http://{self.dashcam_ip}/blackvue_vod.cgi"
@@ -55,10 +57,8 @@ class BlackVueDashCamDownload(hass.Hass):
           if filename == "":
             continue
           elif re.match(r"^(?=.*_P).*$",filename):
-            self.log(f"{filename} ignored.")
             continue
           else:
-            self.log(f"{filename} passed.")
             pass
 
           files_on_camera[f"{filename}F.mp4"] = True
@@ -81,9 +81,11 @@ class BlackVueDashCamDownload(hass.Hass):
 
         if not connected:
           self.error(f"Unable to connect to {self.smb_server_address}, port = {self.smb_server_port}")
+          self.notify(f"Unable to connect to {self.smb_server_address}, port = {self.smb_server_port}", title = self.notify_title, name = "home_assistant", target = ["928048749324959824"])
           return
 
         self.log(f"Connected to //{self.smb_server_address}/{self.smb_share}")
+        self.notify(f"Connected to //{self.smb_server_address}/{self.smb_share}", title = self.notify_title, name = "home_assistant", target = ["928048749324959824"])
 
         results = conn.listPath(self.smb_share, self.smb_path)
         self.log(f"Found {len(results)} existing files on //{self.smb_server_address}/{self.smb_share}/{self.smb_path}")
@@ -164,6 +166,7 @@ class BlackVueDashCamDownload(hass.Hass):
       megabytes = bytes_downloaded / 1024.0 / 1024.0
       bytesstring = locale.format("%.0f", megabytes, grouping=True)
       self.log(f"Dashcam Completely Copied Successfully, {files_downloaded:n} files, {bytesstring} MB downloaded")
+      self.notify(f"Dashcam Completely Copied Successfully, {files_downloaded:n} files, {bytesstring} MB downloaded", title = self.notify_title, name = "home_assistant", target = ["928048749324959824"])
 
     finally:
       if conn:
