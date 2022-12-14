@@ -8,8 +8,8 @@ import locale
 smb_server_name = 'truenas.home.domain'
 smb_server_address = '192.168.0.4'
 smb_timeout = 30
-smb_username = 'michael'
-smb_password = 'Grammar1!@'
+smb_username = ''
+smb_password = ''
 smb_share = 'blackvue'
 smb_path = 'Audi/'
 dashcam_ip = '10.10.200.44'
