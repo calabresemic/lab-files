@@ -1,4 +1,5 @@
-import hassapi as hass
+# Stripped down version of the AppDaemon script that I'm using for testing.
+
 from smb.SMBConnection import SMBConnection
 import requests
 import re
@@ -6,7 +7,7 @@ import datetime
 import io
 import locale
 
-class BlackVueDashCamDownload(hass.Hass):
+class BlackVueDashCamDownload():
 
   def initialize(self):
     self.event_to_listen_for = self.args.get("event_to_listen_for", "dashcam_connected")
@@ -173,4 +174,4 @@ class BlackVueDashCamDownload(hass.Hass):
       if conn:
         conn.close()
 
-    self.log("Complete")
+      self.log("Completed.")
