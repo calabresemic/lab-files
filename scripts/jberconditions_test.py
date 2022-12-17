@@ -1,7 +1,7 @@
 # Stripped down version of the AppDaemon script that I'm using for testing.
 
 import requests
-import datetime
+import re
 from bs4 import BeautifulSoup
 
 class JberConditions():
@@ -16,37 +16,25 @@ class JberConditions():
 
     def get_jber_conditions(self, **kwargs):
         try:
+            # Regex pattern to find conditions... 
+            # Might need to adjust if they change their website
+            pattern = "<b.*?>.*?(.+)<\/b.*?>"
+
             # Get the website data
             raw_html = requests.get(self.URL).text
             data = BeautifulSoup(raw_html, 'html.parser')
             result = str(data.find("div", id="dnn_ctr24928_HtmlModule_lblContent"))
+            match_results = re.findall(pattern, result, re.IGNORECASE)
 
-            # Process road conditions (poorly)
-            if 'GREEN' in result:
-                road_condition = 'Green'
-            elif 'AMBER' in result:
-                road_condition = 'Amber'
-            elif 'RED' in result:
-                road_condition = 'Red'
-            elif 'BLACK' in result:
-                road_condition = 'Black'
-            else:
-                road_condition = 'Unknown'
-
-            # Process reporting status (also poorly)
-            if 'NORMAL' in result:
-                reporting = 'Normal'
-            elif 'DELAYED REPORTING' in result:
-                reporting = 'Delayed'
-            elif ('MISSION ESSENTIAL ONLY' in result) or ('MISSION ESSENTIAL' in result):
-                reporting = 'Mission Essential Only'
-            else:
-                reporting = 'Unknown'
+            # Manually declaring these here in case the text needs processing later.
+            road_condition = match_results[0]
+            reporting = match_results[1]
 
         finally:
             # Update HA entities
             print(f"Road Conditions are: {road_condition}")
             print(f"Reporting is: {reporting}")
+            print('end')
 
 conditions  = JberConditions
 conditions.initialize(conditions)
