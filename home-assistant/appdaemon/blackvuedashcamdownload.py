@@ -9,9 +9,9 @@ class BlackVueDashCamDownload(hass.Hass):
     def initialize(self):
         # SMB args
         self.smb_server_name = self.args.get("smb_server_name")
-        self.smb_timeout = self.args.get("smb_timeout", 30)
         self.smb_username = self.args.get("smb_username")
         self.smb_password = self.args.get("smb_password")
+        self.smb_timeout = self.args.get("smb_timeout", 30)
         self.smb_share = self.args.get("smb_share")
         self.smb_path = self.args.get("smb_path", "/").replace("\\","/")
 
@@ -29,6 +29,7 @@ class BlackVueDashCamDownload(hass.Hass):
         self.log("DashCamDownload.initialize() complete")
 
     def download_from_dashcam(self, event, data, kwargs):
+        # Method to connect to camera and smb share and transfer files
         self.log(f"Starting DashCam Download for Camera: {self.dashcam_ip}")
         self.notify(f"Starting DashCam Download for Camera: {self.dashcam_ip}", title = self.notify_title, name = "home_assistant", target = ["928048749324959824"])
 
@@ -44,35 +45,38 @@ class BlackVueDashCamDownload(hass.Hass):
             vid_list = requests.get(url)
 
             if vid_list.status_code == 200: # Successfully retrieved results
-                # Clean up results
                 trimmed_results = vid_list.text.replace('n:/Record/','').replace('F.mp4,s:1000000','').replace('R.mp4,s:1000000','')
                 split_results = trimmed_results.split() # Convert results to list
                 split_results.pop(0) # Remove first line
 
                 for filename in split_results:
                     if pattern.match(filename):
-                        # Remove parking files
+                        # Remove parking files, I have to leave parking recording
+                        # on to keep the camera connected to wifi when at home
                         continue
                     else:
                         # Continue with good results
                         files_on_camera[f"{filename}F.mp4"] = True
 
                         if self.video_only == False:
+                            # Downloads the accompanying metadata files for playback later
                             files_on_camera[f"{filename}F.thm"] = True
                             files_on_camera[f"{filename}.gps"] = True
                             files_on_camera[f"{filename}.3gf"] = True
 
                         if self.rear_camera == True:
+                            # Download the rear camera video
                             files_on_camera[f"{filename}R.mp4"] = True
 
                             if self.video_only == False:
+                                # Download the rear camera metadata
                                 files_on_camera[f"{filename}R.thm"] = True
 
                 self.log(f'Found {len(files_on_camera)} files on camera.')
 
                 # Initiate SMB Connection
                 with SMBConnection(self.smb_username, self.smb_password, 'hassio.home.domain', self.smb_server_name, use_ntlm_v2=True, is_direct_tcp=True) as conn:
-                    connected = conn.connect(self.smb_server_name, port=445)
+                    connected = conn.connect(self.smb_server_name, port=445, timeout=self.smb_timeout)
 
                     if connected == True:
                         for list in conn.listPath(self.smb_share, self.smb_path):
@@ -92,12 +96,19 @@ class BlackVueDashCamDownload(hass.Hass):
                                 
                                 else:
                                     self.error(f'Unable to download dashcam file {url}, response code: {download.status_code}')
+                                    self.notify(f'Unable to download dashcam file {url}, response code: {download.status_code}', title = self.notify_title, name = "home_assistant", target = ["928048749324959824"])
+
+                        conn.close()
 
                     else:
                         self.error('Failed to connect to SMB server.')
+                        self.notify('Failed to connect to SMB server.', title = self.notify_title, name = "home_assistant", target = ["928048749324959824"])
 
             else:
                 self.error(f'Connecting to camera threw error: {vid_list.status_code}')
+                self.notify(f'Connecting to camera threw error: {vid_list.status_code}', title = self.notify_title, name = "home_assistant", target = ["928048749324959824"])
+
 
         finally:
             self.log(f'Downloaded {downloaded_files} files.')
+            self.notify(f'Downloaded {downloaded_files} files.', title = self.notify_title, name = "home_assistant", target = ["928048749324959824"])
