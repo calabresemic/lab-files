@@ -19,6 +19,29 @@ cards:
       #Section Header
       - type: 'custom:button-card'
         template: card_title
+        name: Lights
+
+      #Light Entities
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_light
+            entity: switch.s31_fd40
+            variables:
+              ulm_card_light_name: Lamp
+          - type: 'custom:button-card'
+            template: card_light
+            entity: light.wled_61a70f
+            variables:
+              ulm_card_light_name: LEDs
+              ulm_card_light_enable_collapse: true
+              ulm_card_light_enable_slider: true
+              ulm_card_light_enable_color: true
+              uulm_card_light_color_palette: select.wled_61a70f_color_palette
+
+      #Section Header
+      - type: 'custom:button-card'
+        template: card_title
         name: Windows
 
       #Window Sensors

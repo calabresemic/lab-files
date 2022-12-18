@@ -6,11 +6,12 @@ cards:
     cards:
       #Welcome Card with navigation
       - type: "custom:button-card"
-        template: "card_esh_welcome"
+        template: "card_aurora_welcome"
         triggers_update: "input_boolean.welcome_toggle"
         variables:
           ulm_card_esh_welcome_collapse: input_boolean.welcome_toggle
-          ulm_weather: "weather.endeavor"
+          ulm_weather: weather.endeavor
+          ulm_aurora: sensor.aurora_visibility
           entity_1:
             nav: "house"
             icon: "mdi:home"
@@ -55,27 +56,6 @@ cards:
             ulm_card_person_use_entity_picture: true
             ulm_card_person_eta: sensor.katie_travel_time
 
-
-      # - type: horizontal-stack
-      #   cards:
-      #     - type: "custom:button-card"
-      #       template: custom_card_imswel_person
-      #       variables:
-      #         ulm_card_imswel_person_entity: person.michael
-      #         ulm_card_imswel_person_wifi_tracker: device_tracker.michael_s_s22
-      #         ulm_card_imswel_person_gps_tracker: device_tracker.sm_s906u
-      #         ulm_card_imswel_person_findmy_script: script.find_michaels_phone
-      #         ulm_card_imswel_person_use_entity_picture: true
-
-      #     - type: "custom:button-card"
-      #       template: custom_card_imswel_person
-      #       variables:
-      #         ulm_card_imswel_person_entity: person.katie
-      #         ulm_card_imswel_person_wifi_tracker: device_tracker.iphone_2
-      #         ulm_card_imswel_person_gps_tracker: device_tracker.iphone
-      #         ulm_card_imswel_person_findmy_script: script.find_katies_phone
-      #         ulm_card_imswel_person_use_entity_picture: true
-      
       #Rooms Title card
       - type: 'custom:button-card'
         template: card_title
@@ -96,10 +76,6 @@ cards:
               navigation_path: 'living_room'
             variables:
               ulm_custom_card_esh_room_light_entity: light.living_room_lamps
-            label: >
-              [[[
-                return "🌡️" + states["sensor.shelly_78f2f0_temperature"].state + " °F"
-              ]]]
 
           - type: 'custom:button-card'
             template:
@@ -132,10 +108,13 @@ cards:
               - card_esh_room
               - yellow_on
             name: Master BR
+            entity: switch.s31_fd40
             icon: mdi:bed
             tap_action:
               action: navigate
               navigation_path: 'master_br'
+            variables:
+              ulm_custom_card_esh_room_light_entity: switch.s31_fd40
             
       #Horizontal-stack to organize rooms
       - type: horizontal-stack
@@ -186,7 +165,7 @@ cards:
               navigation_path: 'lab'
             label: >
               [[[
-                return "🌡️" + states["sensor.shelly_78f097_temperature"].state + " °F"
+                return "🌡️" + states["sensor.h5075_6879_temperature"].state + " °F"
               ]]]
 
       - type: 'custom:button-card'

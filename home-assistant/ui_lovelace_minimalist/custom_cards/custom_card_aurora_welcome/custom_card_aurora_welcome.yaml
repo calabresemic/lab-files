@@ -1,6 +1,7 @@
 ---
 # Based off of v: 1.1.0 of Custom Card Welcome Navigation
 # Only thing changed is that I added a place to put aurora visibility
+# V 1.0.1
 card_aurora_welcome:
   template: "ulm_language_variables"
   variables:
@@ -463,6 +464,9 @@ card_esh_welcome_topbar:
         variables:
           ulm_chip_icon_state_icon: '🌌'
           ulm_chip_icon_state_entity: "[[[ return variables.ulm_aurora]]]"
+        tap_action:
+          action: "more-info"
+        entity: "[[[ return variables.ulm_aurora]]]"
         styles:
           card:
             - width: "100px"
