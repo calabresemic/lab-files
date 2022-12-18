@@ -11,8 +11,8 @@ class BlackVueDashCamDownload():
         # SMB args
         self.smb_server_name = 'truenas.home.domain'
         self.smb_timeout = 30
-        self.smb_username = 'michael'
-        self.smb_password = 'Grammar1!@'
+        self.smb_username = ''
+        self.smb_password = ''
         self.smb_share = 'blackvue'
         self.smb_path = "Audi/"
 
